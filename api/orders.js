@@ -1,9 +1,71 @@
-const { createClient } = require('@supabase/supabase-js');
-const crypto=require('crypto');
-const supabase=()=>createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false}});
-function json(res,status,body){res.status(status).setHeader('Content-Type','application/json');res.end(JSON.stringify(body));}
-function validBody(b){return b&&['JOD','USD','SAR'].includes(b.currency)&&Array.isArray(b.items)&&b.items.length>0&&b.items.length<=30&&b.items.every(x=>/^[a-z0-9-]+$/.test(x.product_id)&&Number.isInteger(x.quantity)&&x.quantity>=1&&x.quantity<=50)}
-module.exports=async(req,res)=>{if(req.method!=='POST')return json(res,405,{error:'Method not allowed'});try{if(!validBody(req.body))return json(res,400,{error:'Invalid order.'});const db=supabase();const {data,error}=await db.rpc('create_gamezone_order',{p_currency:req.body.currency,p_items:req.body.items,p_discord_username:String(req.body.discord_username||'').slice(0,80),p_note:String(req.body.note||'').slice(0,500)});if(error)throw error;const order=data?.[0];if(!order)throw new Error('Order was not created.');
-const payload={username:'GameZone Orders',content:`🎮 **NEW GAMEZONE ORDER**\n\n🧾 **Invoice:** ${order.invoice_id}\n💰 **Total:** ${order.total} ${order.currency}\n🟡 **Status:** PENDING\n\n📦 **Items:**\n${order.items.map(i=>`• ${i.name} × ${i.quantity} — ${i.line_total} ${order.currency}`).join('\n')}\n\n${order.discord_username?`👤 **Discord:** ${order.discord_username}\n`:''}${order.note?`📝 **Note:** ${order.note}\n`:''}⏱️ ${order.created_at}`};
-if(process.env.DISCORD_WEBHOOK_URL){await fetch(process.env.DISCORD_WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});}
-return json(res,201,{invoice_id:order.invoice_id});}catch(e){console.error(e);return json(res,500,{error:'Unable to create order right now.'});}};
+const webhookPayload = {
+  username: "GameZone Orders",
+  avatar_url: "https://i.imgur.com/placeholder.png",
+
+  embeds: [
+    {
+      title: "🎮 GAMEZONE — NEW ORDER",
+      description: `A new order has been placed through the GameZone website.`,
+      color: 0x12a8ff,
+
+      fields: [
+        {
+          name: "🎫 Invoice ID",
+          value: `\`${invoiceId}\``,
+          inline: true
+        },
+        {
+          name: "📌 Status",
+          value: "🟡 **PENDING**",
+          inline: true
+        },
+        {
+          name: "💰 Total",
+          value: `**${total} ${currency}**`,
+          inline: true
+        },
+
+        {
+          name: "🛒 Order Items",
+          value: items
+            .map(item =>
+              `**${item.name}** × ${item.quantity}\n` +
+              `└ ${item.unit_price} ${currency} each`
+            )
+            .join("\n\n")
+            .slice(0, 1024)
+        },
+
+        {
+          name: "👤 Discord Username",
+          value: discord_username || "Not provided",
+          inline: true
+        },
+
+        {
+          name: "📝 Customer Note",
+          value: note || "No note provided",
+          inline: true
+        }
+      ],
+
+      timestamp: new Date().toISOString(),
+
+      footer: {
+        text: "GameZone • Digital Gaming Store"
+      }
+    }
+  ]
+};
+
+try {
+  await fetch(process.env.DISCORD_WEBHOOK_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(webhookPayload)
+  });
+} catch (error) {
+  console.error("Discord webhook failed:", error);
+}
