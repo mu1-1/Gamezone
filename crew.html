@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="GameZone Fortnite Crew membership" />
+  <title>GameZone | Fortnite Crew</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    .crew-page{min-height:100vh;padding:125px 8% 80px;position:relative}
+    .back-link{display:inline-flex;align-items:center;gap:8px;color:#91a0b4;text-decoration:none;font-size:12px;font-weight:700;margin-bottom:25px;transition:.25s}.back-link:hover{color:#fff;transform:translateX(-3px)}
+    .crew-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:45px;align-items:center;margin-bottom:45px}
+    .crew-copy .eyebrow{color:#22d3ff}.crew-copy h1{font-family:"Space Grotesk";font-size:clamp(48px,6vw,82px);line-height:.94;letter-spacing:-3px;margin:8px 0 20px}.crew-copy h1 span{color:#21d4ff}.crew-copy>p{max-width:610px;color:var(--muted);font-size:14px;line-height:1.8}
+    .crew-price{display:flex;align-items:center;gap:18px;margin:28px 0}.crew-price strong{font-family:"Space Grotesk";font-size:45px}.crew-price span{color:#a5b2c5;font-size:12px}.crew-order{display:inline-flex;text-decoration:none;background:linear-gradient(135deg,#00bfff,#1687ff);color:#fff;padding:14px 20px;border-radius:11px;font-size:11px;font-weight:800;box-shadow:0 0 30px rgba(0,191,255,.22);transition:.25s}.crew-order:hover{transform:translateY(-3px);box-shadow:0 0 38px rgba(0,191,255,.38)}
+    .crew-art{border:1px solid rgba(0,191,255,.38);border-radius:22px;overflow:hidden;background:#100b1b;box-shadow:0 25px 70px rgba(0,0,0,.35),0 0 40px rgba(0,191,255,.1)}.crew-art img{width:100%;display:block;height:auto}
+    .crew-label{display:flex;justify-content:space-between;align-items:end;margin:0 0 18px}.crew-label h2{font-family:"Space Grotesk";font-size:27px;margin-top:6px}.crew-label p{color:#22d3ff;font-size:9px;font-weight:800;letter-spacing:2px}
+    .benefit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.benefit{border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:22px;background:linear-gradient(150deg,rgba(19,35,55,.96),rgba(11,12,21,.98));min-height:150px;transition:.3s}.benefit:hover{transform:translateY(-5px);border-color:rgba(0,191,255,.5);box-shadow:0 18px 38px rgba(0,0,0,.25)}.benefit .num{font-size:8px;letter-spacing:1.6px;color:#d66aff;font-weight:800}.benefit h3{font-family:"Space Grotesk";font-size:19px;margin:17px 0 7px}.benefit p{font-size:11px;line-height:1.6;color:#8f9bae}
+    .crew-note{margin-top:20px;border:1px solid rgba(0,191,255,.18);background:rgba(0,191,255,.045);border-radius:14px;padding:16px 18px;color:#8794a7;font-size:11px;line-height:1.65}.crew-note strong{color:#dff8ff}
+    @media(max-width:1000px){.crew-hero{grid-template-columns:1fr}.benefit-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.crew-page{padding-left:5%;padding-right:5%}.benefit-grid{grid-template-columns:1fr}.crew-art{border-radius:16px}.crew-copy h1{letter-spacing:-2px}}
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div><div class="glow glow-one"></div><div class="glow glow-two"></div>
+  <header class="navbar">
+    <a class="brand" href="index.html#home" aria-label="GameZone home"><img src="logo.jpg" alt="GameZone logo"><span>GAME<span>ZONE</span></span></a>
+    <nav><a href="index.html#home" class="nav-link">Home</a><a href="index.html#currencies" class="nav-link active">Digital Currencies</a><a href="index.html#tools" class="nav-link">Tools</a><div class="currency-switcher"><label for="currency-select">Currency</label><select id="currency-select" aria-label="Select currency"><option value="JOD">JOD</option><option value="USD">USD</option><option value="SAR">SAR</option></select></div><a href="index.html#contact" class="nav-link">Contact Us</a><button class="nav-cta cart-trigger" type="button" data-open-cart>Cart <span class="cart-count">0</span></button></nav>
+    <a class="nav-cta" href="index.html#currencies">Back to Store <span>↗</span></a><button class="menu-btn" aria-label="Open menu">☰</button>
+  </header>
+
+  <main class="crew-page">
+    <a href="index.html#currencies" class="back-link">← Back to Digital Currencies</a>
+    <section class="crew-hero">
+      <div class="crew-copy">
+        <span class="eyebrow">FORTNITE / MEMBERSHIP</span>
+        <h1>Fortnite <span>Crew.</span></h1>
+        <p>Get the complete Fortnite Crew membership package every month, with Battle Pass access, V-Bucks, premium passes and exclusive Crew rewards.</p>
+        <div class="crew-price"><strong class="price" data-jod="3.5" data-usd="5" data-sar="19">3.5 <small>JOD</small></strong><span>PER MONTH<br>MONTHLY MEMBERSHIP</span></div>
+        <button class="crew-order cart-add-btn" data-cart-add data-id="fortnite-crew-monthly" data-name="Fortnite Crew — Monthly" data-category="Fortnite" data-jod="3.5" data-usd="5" data-sar="19">ADD TO CART</button>
+      </div>
+      <div class="crew-art"><img src="fortnite-crew.png" alt="Fortnite Crew membership information"></div>
+    </section>
+
+    <section>
+      <div class="crew-label"><div><p>WHAT YOU GET</p><h2>Included with Crew</h2></div><p>MONTHLY BENEFITS</p></div>
+      <div class="benefit-grid">
+        <article class="benefit"><div class="num">01 / CURRENCY</div><h3>800 V-Bucks</h3><p>Get 800 V-Bucks every month as part of your Crew membership.</p></article>
+        <article class="benefit"><div class="num">02 / PASS</div><h3>Battle Pass</h3><p>Unlock 100+ rewards and access the seasonal Battle Pass.</p></article>
+        <article class="benefit"><div class="num">03 / MUSIC</div><h3>Music Pass</h3><p>Unlock premium music rewards and content.</p></article>
+        <article class="benefit"><div class="num">04 / OG</div><h3>OG Pass</h3><p>Get premium OG Pass rewards and benefits.</p></article>
+        <article class="benefit"><div class="num">05 / ROCKET</div><h3>Rocket Pass</h3><p>Premium rewards in Rocket League are included through the membership.</p></article>
+        <article class="benefit"><div class="num">06 / EXCLUSIVE</div><h3>Exclusive Crew Pack</h3><p>Receive exclusive skins, outfits and cosmetics each month.</p></article>
+        <article class="benefit"><div class="num">07 / LEGACY</div><h3>Crew Legacy Set</h3><p>Unlock a new Crew Legacy stage every month you're a member.</p></article>
+        <article class="benefit"><div class="num">08 / LEGO</div><h3>LEGO Pass</h3><p>Unlock premium rewards in LEGO Fortnite.</p></article>
+        <article class="benefit"><div class="num">09 / XP</div><h3>Bonus XP</h3><p>Gain extra XP in Battle Royale with Crew benefits.</p></article>
+        <article class="benefit"><div class="num">10 / DISCOUNTS</div><h3>Crew Discounts</h3><p>Get exclusive discounts on selected Item Shop items.</p></article>
+        <article class="benefit"><div class="num">11 / SUPPORT</div><h3>Crew Support</h3><p>Priority support for Fortnite Crew members.</p></article>
+        <article class="benefit"><div class="num">12 / PLATFORMS</div><h3>All Platforms</h3><p>Works across PC, PlayStation, Xbox, Nintendo Switch and mobile.</p></article>
+      </div>
+      <div class="crew-note"><strong>How to order:</strong> press ORDER FORTNITE CREW and you'll be taken to the GameZone Discord server to complete your monthly membership order.</div>
+    </section>
+  </main>
+  <script src="script.js"></script><script src="cart.js"></script>
+</body>
+</html>

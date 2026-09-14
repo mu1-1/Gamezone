@@ -1,0 +1,9 @@
+const { createClient } = require('@supabase/supabase-js');
+const crypto=require('crypto');
+const supabase=()=>createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false}});
+function json(res,status,body){res.status(status).setHeader('Content-Type','application/json');res.end(JSON.stringify(body));}
+function validBody(b){return b&&['JOD','USD','SAR'].includes(b.currency)&&Array.isArray(b.items)&&b.items.length>0&&b.items.length<=30&&b.items.every(x=>/^[a-z0-9-]+$/.test(x.product_id)&&Number.isInteger(x.quantity)&&x.quantity>=1&&x.quantity<=50)}
+module.exports=async(req,res)=>{if(req.method!=='POST')return json(res,405,{error:'Method not allowed'});try{if(!validBody(req.body))return json(res,400,{error:'Invalid order.'});const db=supabase();const {data,error}=await db.rpc('create_gamezone_order',{p_currency:req.body.currency,p_items:req.body.items,p_discord_username:String(req.body.discord_username||'').slice(0,80),p_note:String(req.body.note||'').slice(0,500)});if(error)throw error;const order=data?.[0];if(!order)throw new Error('Order was not created.');
+const payload={username:'GameZone Orders',content:`🎮 **NEW GAMEZONE ORDER**\n\n🧾 **Invoice:** ${order.invoice_id}\n💰 **Total:** ${order.total} ${order.currency}\n🟡 **Status:** PENDING\n\n📦 **Items:**\n${order.items.map(i=>`• ${i.name} × ${i.quantity} — ${i.line_total} ${order.currency}`).join('\n')}\n\n${order.discord_username?`👤 **Discord:** ${order.discord_username}\n`:''}${order.note?`📝 **Note:** ${order.note}\n`:''}⏱️ ${order.created_at}`};
+if(process.env.DISCORD_WEBHOOK_URL){await fetch(process.env.DISCORD_WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});}
+return json(res,201,{invoice_id:order.invoice_id});}catch(e){console.error(e);return json(res,500,{error:'Unable to create order right now.'});}};

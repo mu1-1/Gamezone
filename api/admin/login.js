@@ -1,0 +1,3 @@
+const crypto=require('crypto');
+function sig(v){return crypto.createHmac('sha256',process.env.ADMIN_PASSWORD||'').update(v).digest('hex')}
+module.exports=async(req,res)=>{if(req.method!=='POST'){res.status(405).end();return}const {password}=req.body||{};const expected=process.env.ADMIN_PASSWORD||'';const valid=typeof password==='string'&&password.length===expected.length&&expected.length>0&&crypto.timingSafeEqual(Buffer.from(password),Buffer.from(expected));if(!valid){res.status(401).json({error:'Invalid login'});return}const exp=Date.now()+1000*60*60*12;const token=`${exp}.${sig(String(exp))}`;res.setHeader('Set-Cookie',`gz_admin=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=43200`);res.json({ok:true})};
