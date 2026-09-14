@@ -15,7 +15,6 @@ function sig(value) {
 
 function isAdmin(req) {
   const cookieHeader = req.headers.cookie || "";
-
   const cookies = {};
 
   cookieHeader.split(";").forEach((part) => {
@@ -28,21 +27,17 @@ function isAdmin(req) {
 
   const token = cookies.gz_admin;
 
-  if (!token) {
-    return false;
-  }
+  if (!token) return false;
 
   const [exp, signature] = token.split(".");
 
-  if (!exp || !signature) {
-    return false;
-  }
+  if (!exp || !signature) return false;
 
   const expires = Number(exp);
 
-  if (!Number.isFinite(expires) || Date.now() > expires) {
-    return false;
-  }
+  if (!Number.isFinite(expires)) return false;
+
+  if (Date.now() > expires) return false;
 
   const expectedSignature = sig(String(expires));
 
@@ -84,7 +79,6 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Get the order
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .select("*")
@@ -92,7 +86,7 @@ module.exports = async (req, res) => {
       .maybeSingle();
 
     if (orderError) {
-      console.error("Admin order search error:", orderError);
+      console.error("Order lookup error:", orderError);
 
       return res.status(500).json({
         error: "Unable to search orders."
@@ -105,15 +99,16 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Get all items belonging to the order
-    const { data: items, error: itemsError } = await supabase
+    const { data: orderItems, error: itemsError } = await supabase
       .from("order_items")
-      .select("*")
+      .select(
+        "id, order_id, product_id, name, quantity, unit_price, line_total"
+      )
       .eq("order_id", order.id)
       .order("id", { ascending: true });
 
     if (itemsError) {
-      console.error("Admin order items error:", itemsError);
+      console.error("Order items lookup error:", itemsError);
 
       return res.status(500).json({
         error: "Unable to load order items."
@@ -121,15 +116,19 @@ module.exports = async (req, res) => {
     }
 
     return res.status(200).json({
-      success: true,
-      order: {
-        ...order,
-        items: items || []
-      }
+      invoice_id: order.invoice_id,
+      currency: order.currency,
+      total: order.total,
+      status: order.status,
+      discord_username: order.discord_username,
+      note: order.note,
+      created_at: order.created_at,
+      updated_at: order.updated_at,
+      order_items: orderItems || []
     });
 
   } catch (error) {
-    console.error("Admin orders API error:", error);
+    console.error("Admin orders error:", error);
 
     return res.status(500).json({
       error: "Unable to search orders."
