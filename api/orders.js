@@ -32,7 +32,6 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Create the order using the secure Supabase database function.
     const { data, error } = await supabase.rpc(
       "create_gamezone_order",
       {
@@ -62,10 +61,13 @@ module.exports = async (req, res) => {
     const invoiceId = order.invoice_id;
     const total = order.total;
 
-    /*
-     * Send the order to Discord.
-     * This happens AFTER the database successfully creates the order.
-     */
+    // IMPORTANT:
+    // Use the product information returned by Supabase,
+    // not the untrusted browser cart information.
+    const orderItems = Array.isArray(order.items)
+      ? order.items
+      : [];
+
     const webhookPayload = {
       username: "GameZone Orders",
 
@@ -99,25 +101,35 @@ module.exports = async (req, res) => {
 
             {
               name: "🛒 Order Items",
-              value: items
-                .map(
-                  (item) =>
-                    `**${item.name}** × ${item.quantity}\n` +
-                    `└ ${item.unit_price} ${currency} each`
-                )
-                .join("\n\n")
-                .slice(0, 1024)
+
+              value:
+                orderItems.length > 0
+                  ? orderItems
+                      .map(
+                        (item) =>
+                          `**${item.name}** × ${item.quantity}\n` +
+                          `└ ${item.unit_price} ${currency} each`
+                      )
+                      .join("\n\n")
+                      .slice(0, 1024)
+                  : "No items found."
             },
 
             {
               name: "👤 Discord Username",
-              value: discord_username || "Not provided",
+              value:
+                order.discord_username ||
+                "Not provided",
+
               inline: true
             },
 
             {
               name: "📝 Customer Note",
-              value: note || "No note provided",
+              value:
+                order.note ||
+                "No note provided",
+
               inline: true
             }
           ],
@@ -131,15 +143,18 @@ module.exports = async (req, res) => {
       ]
     };
 
-    // Discord failure should NOT delete/fail the order.
+    // Send order notification to Discord.
+    // If Discord fails, the order itself still remains in Supabase.
     try {
       const discordResponse = await fetch(
         process.env.DISCORD_WEBHOOK_URL,
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json"
           },
+
           body: JSON.stringify(webhookPayload)
         }
       );
@@ -151,6 +166,7 @@ module.exports = async (req, res) => {
           await discordResponse.text()
         );
       }
+
     } catch (discordError) {
       console.error(
         "Discord webhook failed:",
