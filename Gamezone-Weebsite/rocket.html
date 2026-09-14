@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="GameZone Rocket League Credits prices" />
+  <title>GameZone | Rocket League Credits</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    .price-page{min-height:100vh;padding:125px 8% 80px;position:relative}
+    .price-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:50px;align-items:center;margin-bottom:55px}
+    .back-link{display:inline-flex;align-items:center;gap:8px;color:#91a0b4;text-decoration:none;font-size:12px;font-weight:700;margin-bottom:25px;transition:.25s}
+    .back-link:hover{color:#fff;transform:translateX(-3px)}
+    .price-hero h1{font-family:"Space Grotesk";font-size:clamp(48px,6vw,82px);line-height:.95;letter-spacing:-3px;margin:0 0 20px}
+    .price-hero h1 span{color:var(--blue)}
+    .price-hero p{max-width:590px;color:var(--muted);font-size:14px;line-height:1.8}
+    .price-art{height:290px;border:1px solid rgba(18,168,255,.3);border-radius:22px;overflow:hidden;background:#0d1725;box-shadow:0 25px 70px rgba(0,0,0,.3),0 0 35px rgba(18,168,255,.08);position:relative}
+    .price-art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(5,9,15,.5));pointer-events:none}
+    .price-art img{width:100%;height:100%;object-fit:cover;display:block}
+    .price-label{display:flex;justify-content:space-between;align-items:end;margin-bottom:18px}.price-label h2{font-family:"Space Grotesk";font-size:27px;letter-spacing:-1px}.price-label p{color:#6fc9ff;font-size:9px;font-weight:800;letter-spacing:2px}
+    .price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .price-card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:25px 20px 20px;background:linear-gradient(150deg,rgba(27,42,63,.95),rgba(9,14,23,.98));min-height:260px;transition:.3s;display:flex;flex-direction:column}
+    .price-card:before{content:"";position:absolute;width:170px;height:170px;right:-80px;top:-80px;background:rgba(18,168,255,.16);filter:blur(45px);transition:.3s}
+    .price-card:hover{transform:translateY(-7px);border-color:rgba(18,168,255,.55);box-shadow:0 22px 45px rgba(0,0,0,.28),0 0 28px rgba(18,168,255,.1)}
+    .price-card .popular{font-size:8px;letter-spacing:1.6px;color:#67d1ff;font-weight:800;margin-bottom:24px}
+    .vicon{width:48px;height:48px;border-radius:14px;background:rgba(18,168,255,.1);border:1px solid rgba(18,168,255,.22);display:grid;place-items:center;margin-bottom:18px;position:relative;z-index:1}
+    .vicon img{width:32px;height:32px;object-fit:contain}
+    .price-card h3{font-family:"Space Grotesk";font-size:22px;margin-bottom:7px;position:relative;z-index:1}.price-card .amount{color:#91a0b4;font-size:11px;position:relative;z-index:1}
+    .buy-row{margin-top:auto;padding-top:22px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.price{font-family:"Space Grotesk";font-size:27px;font-weight:700}.price small{font-family:Inter;font-size:10px;color:#91a0b4;font-weight:600}
+    .buy-btn{color:#06121c;text-decoration:none;background:var(--blue);padding:10px 13px;border-radius:9px;font-size:10px;font-weight:800;transition:.25s}.buy-btn:hover{box-shadow:0 0 22px rgba(18,168,255,.35);transform:translateY(-2px)}
+    .order-note{margin-top:28px;border:1px solid rgba(18,168,255,.16);background:rgba(18,168,255,.045);border-radius:14px;padding:16px 18px;color:#7f8da1;font-size:11px;line-height:1.6}.order-note strong{color:#dceaff}
+    @media(max-width:1000px){.price-grid{grid-template-columns:repeat(2,1fr)}.price-hero{grid-template-columns:1fr}.price-art{height:300px}}
+    @media(max-width:600px){.price-page{padding-left:5%;padding-right:5%}.price-grid{grid-template-columns:1fr}.price-art{height:230px}.price-card{min-height:230px}}
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div><div class="glow glow-one"></div><div class="glow glow-two"></div>
+  <header class="navbar">
+    <a class="brand" href="index.html#home" aria-label="GameZone home"><img src="logo.jpg" alt="GameZone logo"><span>GAME<span>ZONE</span></span></a>
+    <nav><a href="index.html#home" class="nav-link">Home</a><a href="index.html#currencies" class="nav-link active">Digital Currencies</a><a href="index.html#tools" class="nav-link">Tools</a><div class="currency-switcher"><label for="currency-select">Currency</label><select id="currency-select" aria-label="Select currency"><option value="JOD">JOD</option><option value="USD">USD</option><option value="SAR">SAR</option></select></div><a href="index.html#contact" class="nav-link">Contact Us</a><button class="nav-cta cart-trigger" type="button" data-open-cart>Cart <span class="cart-count">0</span></button></nav>
+    <a class="nav-cta" href="index.html#currencies">Back to Store <span>↗</span></a><button class="menu-btn" aria-label="Open menu">☰</button>
+  </header>
+
+  <main class="price-page">
+    <section class="price-hero">
+      <div>
+        <a href="index.html#currencies" class="back-link">← Back to Digital Currencies</a>
+        <span class="eyebrow">ROCKET LEAGUE / CREDITS</span>
+        <h1>Choose your<br><span>Credits.</span></h1>
+        <p>Get your Rocket League Credits quickly and choose the package that fits you. Simple pricing with a clean, straightforward ordering experience.</p>
+      </div>
+      <div class="price-art"><img src="rocket-credits.png" alt="Rocket League Credits"></div>
+    </section>
+
+    <section>
+      <div class="price-label"><div><p>GAMEZONE STORE</p><h2>Credits packages</h2></div><p>4 OPTIONS</p></div>
+      <div class="price-grid">
+        <article class="price-card"><div class="popular">STARTER</div><div class="vicon"><img src="rocket-credits.svg" alt="Rocket League Credits"></div><h3>500 Credits</h3><div class="amount">Rocket League digital currency</div><div class="buy-row"><div class="price" data-jod="3.5" data-usd="5" data-sar="19">3.5 <small>JOD</small></div><button class="buy-btn cart-add-btn" data-cart-add data-id="rocket-500-credits" data-name="500 Credits" data-category="Rocket League" data-jod="3.5" data-usd="5" data-sar="19">ADD TO CART</button></div></article>
+        <article class="price-card"><div class="popular">POPULAR</div><div class="vicon"><img src="rocket-credits.svg" alt="Rocket League Credits"></div><h3>1,100 Credits</h3><div class="amount">Rocket League digital currency</div><div class="buy-row"><div class="price" data-jod="6" data-usd="8.5" data-sar="32">6 <small>JOD</small></div><button class="buy-btn cart-add-btn" data-cart-add data-id="rocket-1100-credits" data-name="1,100 Credits" data-category="Rocket League" data-jod="6" data-usd="8.5" data-sar="32">ADD TO CART</button></div></article>
+        <article class="price-card"><div class="popular">BEST VALUE</div><div class="vicon"><img src="rocket-credits.svg" alt="Rocket League Credits"></div><h3>3,100 Credits</h3><div class="amount">Rocket League digital currency</div><div class="buy-row"><div class="price" data-jod="13" data-usd="18.5" data-sar="69">13 <small>JOD</small></div><button class="buy-btn cart-add-btn" data-cart-add data-id="rocket-3100-credits" data-name="3,100 Credits" data-category="Rocket League" data-jod="13" data-usd="18.5" data-sar="69">ADD TO CART</button></div></article>
+        <article class="price-card"><div class="popular">MEGA PACK</div><div class="vicon"><img src="rocket-credits.svg" alt="Rocket League Credits"></div><h3>6,500 Credits</h3><div class="amount">Rocket League digital currency</div><div class="buy-row"><div class="price" data-jod="25" data-usd="35.5" data-sar="133">25 <small>JOD</small></div><button class="buy-btn cart-add-btn" data-cart-add data-id="rocket-6500-credits" data-name="6,500 Credits" data-category="Rocket League" data-jod="25" data-usd="35.5" data-sar="133">ADD TO CART</button></div></article>
+      </div>
+      <div class="order-note"><strong>How to order:</strong> choose your package and press ADD TO CART. Your cart stays available while you browse other GameZone products.</div>
+    </section>
+  </main>
+  <script src="script.js"></script><script src="cart.js"></script>
+</body>
+</html>
