@@ -1,111 +1,114 @@
-async function loadProducts() {
-  const container = document.getElementById("products");
+const crypto = require("crypto");
+const { createClient } = require("@supabase/supabase-js");
 
-  if (!container) return;
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
-  container.textContent = "Loading products...";
+function sig(value) {
+  return crypto
+    .createHmac("sha256", process.env.ADMIN_PASSWORD || "")
+    .update(value)
+    .digest("hex");
+}
+
+function isAdmin(req) {
+  const cookieHeader = req.headers.cookie || "";
+  const cookies = {};
+
+  cookieHeader.split(";").forEach((part) => {
+    const [key, ...value] = part.trim().split("=");
+    if (key) cookies[key] = value.join("=");
+  });
+
+  const token = cookies.gz_admin;
+  if (!token) return false;
+
+  const [exp, signature] = token.split(".");
+  if (!exp || !signature) return false;
+
+  const expires = Number(exp);
+
+  if (!Number.isFinite(expires) || Date.now() > expires) {
+    return false;
+  }
+
+  const expected = sig(String(expires));
+
+  if (signature.length !== expected.length) {
+    return false;
+  }
 
   try {
-    const response = await fetch("/api/admin/products");
-
-    if (!response.ok) {
-      throw new Error("Failed to load products");
-    }
-
-    const data = await response.json();
-    const products = data.products || [];
-
-    if (!products.length) {
-      container.textContent = "No products found.";
-      return;
-    }
-
-    container.innerHTML = products.map(product => {
-      const isInStock = product.active === true;
-
-      return `
-        <div class="product-row">
-          <div class="product-info">
-            <strong>${escapeHtml(product.name)}</strong>
-            <span>
-              ${escapeHtml(product.category)}
-              · ${Number(product.jod).toFixed(2)} JOD
-            </span>
-          </div>
-
-          <div class="product-actions">
-
-            <span class="stock ${isInStock ? "in" : "out"}">
-              ${isInStock ? "IN STOCK" : "OUT OF STOCK"}
-            </span>
-
-            <button
-              class="stock-btn ${isInStock ? "" : "out"}"
-              data-product-id="${escapeHtml(product.id)}"
-              data-active="${isInStock}"
-            >
-              ${isInStock ? "TURN OFF" : "TURN ON"}
-            </button>
-
-          </div>
-        </div>
-      `;
-    }).join("");
-
-    container.querySelectorAll(".stock-btn").forEach(button => {
-      button.addEventListener("click", async () => {
-
-        const id = button.dataset.productId;
-        const currentActive = button.dataset.active === "true";
-
-        button.disabled = true;
-        button.textContent = "UPDATING...";
-
-        try {
-          const response = await fetch("/api/admin/products", {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              id,
-              active: !currentActive
-            })
-          });
-
-          const data = await response.json();
-
-          if (!response.ok) {
-            throw new Error(data.error || "Failed to update stock");
-          }
-
-          await loadProducts();
-
-        } catch (error) {
-          console.error(error);
-          alert(error.message);
-          await loadProducts();
-        }
-      });
-    });
-
-  } catch (error) {
-    console.error(error);
-
-    container.innerHTML = `
-      <div class="err">
-        Unable to load products.
-      </div>
-    `;
+    return crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expected)
+    );
+  } catch {
+    return false;
   }
 }
 
+module.exports = async (req, res) => {
+  if (!isAdmin(req)) {
+    return res.status(401).json({
+      error: "Unauthorized"
+    });
+  }
 
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
+  try {
+
+    if (req.method === "GET") {
+
+      const { data, error } = await supabase
+        .from("products")
+        .select("id,name,category,jod,usd,sar,active")
+        .order("category", { ascending: true })
+        .order("name", { ascending: true });
+
+      if (error) throw error;
+
+      return res.status(200).json({
+        products: data || []
+      });
+    }
+
+    if (req.method === "PATCH") {
+
+      const { id, active } = req.body || {};
+
+      if (!id || typeof active !== "boolean") {
+        return res.status(400).json({
+          error: "Product ID and active status are required."
+        });
+      }
+
+      const { data, error } = await supabase
+        .from("products")
+        .update({ active })
+        .eq("id", id)
+        .select("id,name,category,jod,usd,sar,active")
+        .single();
+
+      if (error) throw error;
+
+      return res.status(200).json({
+        success: true,
+        product: data
+      });
+    }
+
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
+
+  } catch (error) {
+
+    console.error("Products admin error:", error);
+
+    return res.status(500).json({
+      error: "Unable to update products."
+    });
+  }
+};
