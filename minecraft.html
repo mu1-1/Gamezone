@@ -71,35 +71,46 @@ async function checkMinecoinsStock() {
 
       const card = button.closest(".price-card");
 
-      if (!card) return;
+      if (!card || product.active) return;
 
-      if (!product.active) {
+      /* Make sure the ribbon can stay inside the card */
+      card.style.position = "relative";
+      card.style.overflow = "hidden";
 
-        // Create OUT OF STOCK label
-        const label = document.createElement("div");
+      /* Create ribbon */
+      const ribbon = document.createElement("div");
 
-        label.textContent = "OUT OF STOCK";
+      ribbon.textContent = "OUT OF STOCK";
 
-        label.style.color = "#ff8d8d";
-        label.style.fontSize = "9px";
-        label.style.fontWeight = "900";
-        label.style.letterSpacing = "2px";
-        label.style.marginBottom = "8px";
-        label.style.textTransform = "uppercase";
+      ribbon.style.position = "absolute";
+      ribbon.style.top = "18px";
+      ribbon.style.right = "-42px";
+      ribbon.style.width = "150px";
+      ribbon.style.padding = "7px 0";
+      ribbon.style.background = "#ff4d5a";
+      ribbon.style.color = "#fff";
+      ribbon.style.fontSize = "8px";
+      ribbon.style.fontWeight = "900";
+      ribbon.style.letterSpacing = "1.5px";
+      ribbon.style.textAlign = "center";
+      ribbon.style.transform = "rotate(45deg)";
+      ribbon.style.transformOrigin = "center";
+      ribbon.style.zIndex = "10";
+      ribbon.style.boxShadow = "0 4px 15px rgba(0,0,0,.3)";
+      ribbon.style.pointerEvents = "none";
 
-        // Put label above the card
-        card.parentNode.insertBefore(label, card);
+      card.appendChild(ribbon);
 
-        // Disable button
-        button.disabled = true;
-        button.textContent = "OUT OF STOCK";
-        button.style.opacity = "0.45";
-        button.style.cursor = "not-allowed";
-        button.style.pointerEvents = "none";
+      /* Disable purchase */
+      button.disabled = true;
+      button.textContent = "OUT OF STOCK";
+      button.style.opacity = "0.4";
+      button.style.cursor = "not-allowed";
+      button.style.pointerEvents = "none";
 
-        // Dim the card
-        card.style.opacity = "0.65";
-      }
+      /* Slightly dim card */
+      card.style.opacity = "0.65";
+
     });
 
   } catch (error) {
