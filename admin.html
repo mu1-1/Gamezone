@@ -1,1 +1,219 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GameZone Admin</title><link rel="icon" type="image/jpeg" href="logo.jpg"><link rel="stylesheet" href="style.css"><style>.admin{min-height:100vh;padding:130px 8% 80px}.panel{max-width:850px;margin:auto;background:linear-gradient(150deg,#16263a,#080d15);border:1px solid rgba(18,168,255,.2);border-radius:22px;padding:30px}.admin h1{font-family:'Space Grotesk';font-size:45px}.admin h1 span{color:var(--blue)}input,select{width:100%;box-sizing:border-box;background:#08111d;border:1px solid rgba(255,255,255,.1);color:#fff;padding:12px;border-radius:9px;margin:7px 0 14px}.admin button{border:0;background:var(--blue);padding:12px 16px;border-radius:9px;font-weight:900;cursor:pointer}.order{margin-top:25px;border-top:1px solid rgba(255,255,255,.1);padding-top:22px}.line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px}.muted{color:#91a0b4;font-size:11px}.err{color:#ff8d8d;margin-top:10px}</style></head><body><main class="admin"><div class="panel"><p style="color:#67caff;font-size:9px;font-weight:900;letter-spacing:2px">GAMEZONE PRIVATE</p><h1>Admin <span>Orders</span></h1><section id="login"><p class="muted">Sign in with your private admin password.</p><input id="password" type="password" autocomplete="current-password" placeholder="Admin password"><button id="loginBtn">LOGIN</button><div id="loginErr" class="err"></div></section><section id="dashboard" hidden><div style="display:flex;gap:10px"><input id="invoice" placeholder="GZ-2026-000001"><button id="search">SEARCH</button></div><div id="result"></div></section></div></main><script src="admin.js"></script></body></html>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GameZone Admin</title>
+
+<link rel="icon" type="image/jpeg" href="logo.jpg">
+<link rel="stylesheet" href="style.css">
+
+<style>
+.admin{
+  min-height:100vh;
+  padding:130px 8% 80px
+}
+
+.panel{
+  max-width:950px;
+  margin:auto;
+  background:linear-gradient(150deg,#16263a,#080d15);
+  border:1px solid rgba(18,168,255,.2);
+  border-radius:22px;
+  padding:30px
+}
+
+.admin h1{
+  font-family:'Space Grotesk';
+  font-size:45px
+}
+
+.admin h1 span{
+  color:var(--blue)
+}
+
+input,select{
+  width:100%;
+  box-sizing:border-box;
+  background:#08111d;
+  border:1px solid rgba(255,255,255,.1);
+  color:#fff;
+  padding:12px;
+  border-radius:9px;
+  margin:7px 0 14px
+}
+
+.admin button{
+  border:0;
+  background:var(--blue);
+  padding:12px 16px;
+  border-radius:9px;
+  font-weight:900;
+  cursor:pointer
+}
+
+.order{
+  margin-top:25px;
+  border-top:1px solid rgba(255,255,255,.1);
+  padding-top:22px
+}
+
+.line{
+  display:flex;
+  justify-content:space-between;
+  padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:12px
+}
+
+.muted{
+  color:#91a0b4;
+  font-size:11px
+}
+
+.err{
+  color:#ff8d8d;
+  margin-top:10px
+}
+
+.products-title{
+  margin-top:45px;
+  margin-bottom:15px;
+  font-family:'Space Grotesk';
+}
+
+.product-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:16px 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.product-info strong{
+  display:block;
+  font-size:15px;
+}
+
+.product-info span{
+  color:#91a0b4;
+  font-size:11px;
+}
+
+.stock{
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:1px;
+  padding:7px 10px;
+  border-radius:8px;
+}
+
+.stock.in{
+  color:#72ffae;
+  background:rgba(50,255,140,.08);
+  border:1px solid rgba(50,255,140,.2);
+}
+
+.stock.out{
+  color:#ff8d8d;
+  background:rgba(255,70,70,.08);
+  border:1px solid rgba(255,70,70,.2);
+}
+
+.stock-btn{
+  min-width:145px;
+}
+
+.stock-btn.out{
+  background:#263444;
+  color:#fff;
+}
+
+.stock-btn:hover{
+  opacity:.85;
+}
+
+.product-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+@media(max-width:650px){
+  .product-row{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .product-actions{
+    width:100%;
+  }
+
+  .stock-btn{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main class="admin">
+
+<div class="panel">
+
+<p style="color:#67caff;font-size:9px;font-weight:900;letter-spacing:2px">
+GAMEZONE PRIVATE
+</p>
+
+<h1>Admin <span>Panel</span></h1>
+
+<section id="login">
+
+<p class="muted">
+Sign in with your private admin password.
+</p>
+
+<input
+  id="password"
+  type="password"
+  autocomplete="current-password"
+  placeholder="Admin password"
+>
+
+<button id="loginBtn">LOGIN</button>
+
+<div id="loginErr" class="err"></div>
+
+</section>
+
+
+<section id="dashboard" hidden>
+
+<h2 class="products-title">Products</h2>
+
+<div id="products">
+Loading products...
+</div>
+
+
+<h2 class="products-title">Orders</h2>
+
+<div style="display:flex;gap:10px">
+<input id="invoice" placeholder="GZ-2026-000001">
+<button id="search">SEARCH</button>
+</div>
+
+<div id="result"></div>
+
+</section>
+
+</div>
+
+</main>
+
+<script src="admin.js"></script>
+
+</body>
+</html>
