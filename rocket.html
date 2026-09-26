@@ -68,6 +68,73 @@
       <div class="order-note"><strong>How to order:</strong> choose your package and press ADD TO CART. Your cart stays available while you browse other GameZone products.</div>
     </section>
   </main>
-  <script src="script.js"></script><script src="cart.js"></script>
+  <script src="script.js"></script>
+  <script src="cart.js"></script>
+  <script>
+async function checkRocketStock() {
+  try {
+    const response = await fetch(
+      "/api/products?ids=rocket-500-credits,rocket-1100-credits,rocket-3100-credits,rocket-6500-credits"
+    );
+
+    if (!response.ok) return;
+
+    const data = await response.json();
+    const products = data.products || [];
+
+    products.forEach(product => {
+      if (product.active) return;
+
+      const button = document.querySelector(
+        `[data-id="${product.id}"]`
+      );
+
+      if (!button) return;
+
+      const card = button.closest(".price-card");
+
+      if (!card) return;
+
+      card.style.position = "relative";
+      card.style.overflow = "hidden";
+
+      const ribbon = document.createElement("div");
+
+      ribbon.textContent = "OUT OF STOCK";
+
+      ribbon.style.position = "absolute";
+      ribbon.style.top = "18px";
+      ribbon.style.right = "-42px";
+      ribbon.style.width = "150px";
+      ribbon.style.padding = "7px 0";
+      ribbon.style.background = "#ff4d5a";
+      ribbon.style.color = "#fff";
+      ribbon.style.fontSize = "8px";
+      ribbon.style.fontWeight = "900";
+      ribbon.style.letterSpacing = "1.5px";
+      ribbon.style.textAlign = "center";
+      ribbon.style.transform = "rotate(45deg)";
+      ribbon.style.zIndex = "10";
+      ribbon.style.boxShadow = "0 4px 15px rgba(0,0,0,.3)";
+      ribbon.style.pointerEvents = "none";
+
+      card.appendChild(ribbon);
+
+      button.disabled = true;
+      button.textContent = "OUT OF STOCK";
+      button.style.opacity = "0.4";
+      button.style.cursor = "not-allowed";
+      button.style.pointerEvents = "none";
+
+      card.style.opacity = "0.65";
+    });
+
+  } catch (error) {
+    console.error("Rocket League stock check failed:", error);
+  }
+}
+
+checkRocketStock();
+</script>
 </body>
 </html>
