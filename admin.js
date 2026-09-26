@@ -57,52 +57,98 @@ async function loadProducts() {
       return;
     }
 
-    box.innerHTML = data.products.map(product => {
+    // Group products by category
+    const groups = {};
 
-      const active = product.active;
+    data.products.forEach(product => {
 
-      return `
-        <div class="product-row">
+      if (!groups[product.category]) {
+        groups[product.category] = [];
+      }
 
-          <div class="product-info">
+      groups[product.category].push(product);
 
-            <strong>${esc(product.name)}</strong>
+    });
 
-            <span>
-              ${esc(product.category)}
-              · ${product.jod} JOD
-            </span>
+    // Category order
+    const categoryOrder = [
+      "Fortnite",
+      "Minecraft",
+      "Rocket League"
+    ];
+
+    box.innerHTML = categoryOrder
+      .filter(category => groups[category])
+      .map(category => {
+
+        return `
+          <div class="admin-product-group">
+
+            <div class="admin-product-category">
+              ${esc(category)}
+            </div>
+
+            <div class="admin-product-list">
+
+              ${groups[category].map(product => {
+
+                const active = product.active;
+
+                return `
+                  <div class="product-row">
+
+                    <div class="product-info">
+
+                      <strong>
+                        ${esc(product.name)}
+                      </strong>
+
+                      <span>
+                        ${product.jod} JOD
+                      </span>
+
+                    </div>
+
+                    <div class="product-actions">
+
+                      <span class="stock ${active ? "in" : "out"}">
+                        ${active ? "IN STOCK" : "OUT OF STOCK"}
+                      </span>
+
+                      <button
+                        class="stock-btn ${active ? "" : "out"}"
+                        data-product-id="${esc(product.id)}"
+                        data-active="${active}"
+                      >
+                        ${active
+                          ? "MARK OUT OF STOCK"
+                          : "MARK IN STOCK"}
+                      </button>
+
+                    </div>
+
+                  </div>
+                `;
+
+              }).join("")}
+
+            </div>
 
           </div>
+        `;
 
-          <div class="product-actions">
-
-            <span class="stock ${active ? "in" : "out"}">
-              ${active ? "IN STOCK" : "OUT OF STOCK"}
-            </span>
-
-            <button
-              class="stock-btn ${active ? "" : "out"}"
-              data-product-id="${esc(product.id)}"
-              data-active="${active}"
-            >
-              ${active ? "MARK OUT OF STOCK" : "MARK IN STOCK"}
-            </button>
-
-          </div>
-
-        </div>
-      `;
-
-    }).join("");
+      })
+      .join("");
 
 
+    // Stock buttons
     box.querySelectorAll(".stock-btn").forEach(button => {
 
       button.onclick = async () => {
 
         const id = button.dataset.productId;
-        const currentlyActive = button.dataset.active === "true";
+        const currentlyActive =
+          button.dataset.active === "true";
 
         button.disabled = true;
         button.textContent = "UPDATING...";
@@ -130,12 +176,16 @@ async function loadProducts() {
 
           button.disabled = false;
 
+          button.textContent =
+            currentlyActive
+              ? "MARK OUT OF STOCK"
+              : "MARK IN STOCK";
+
         }
 
       };
 
     });
-
 
   } catch (e) {
 
